@@ -1,191 +1,238 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 
-# 1. Page Configuration
+# -----------------------------------------------------------------------------
+# Configuration & Theme Setup
+# -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="NeFibonacci",
-    page_icon="✨",
+    page_title="NeFibonacci // 3D Torus & Harmonic Engine",
+    page_icon="🌌",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom Aesthetic Styles
+# Custom High-Contrast Radiant Styling
 st.markdown("""
 <style>
-    .stApp {
-        background: radial-gradient(circle at 50% 15%, #180033 0%, #0a0b12 65%, #020205 100%);
-        color: #f3f4f6;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    .main {
+        background-color: #050508;
     }
-    .metric-container {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(192, 132, 252, 0.2);
-        border-radius: 10px;
-        padding: 14px;
-        margin-bottom: 15px;
+    .stMetric {
+        background-color: #0f1017;
+        border: 1px solid #1f2233;
+        border-radius: 8px;
+        padding: 10px;
     }
-    .metric-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #e879f9;
+    div[data-testid="stSidebar"] {
+        background-color: #0b0c12;
+        border-right: 1px solid #1a1c26;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# 3. Header
-st.title("✨ NeFibonacci")
-st.markdown("*Generalized N-step Fibonacci Engine & Radiant 3D Visualizer*")
-
-# 4. Sidebar Controls
-with st.sidebar:
-    st.header("⚙️ Sequence Settings")
-    order = st.slider(
-        "Recurrence Order (k)",
-        min_value=2,
-        max_value=6,
-        value=2,
-        help="2 = Classical Fibonacci, 3 = Tribonacci, 4 = Tetranacci"
-    )
-    length = st.slider(
-        "Sequence Length",
-        min_value=8,
-        max_value=100,
-        value=32
-    )
-    modulo_val = st.number_input(
-        "Pisano / Modulo Cycle",
-        min_value=2,
-        max_value=32,
-        value=9,
-        step=1
-    )
-    colorscale = st.selectbox(
-        "Color Radiance",
-        ["Plasma", "Turbo", "Viridis", "Electric", "Inferno", "Magenta"]
-    )
-    st.markdown("---")
-    show_table = st.checkbox("Show Data Table", value=False)
-
-# 5. Core Mathematical Generator
-def compute_generalized_fibonacci(k: int, n: int) -> list:
-    """Computes generalized k-step Fibonacci sequence safely."""
-    if n <= 0:
+# -----------------------------------------------------------------------------
+# Mathematical Calculation Functions
+# -----------------------------------------------------------------------------
+def compute_generalized_fibonacci(k: int, n_terms: int) -> list:
+    """
+    Computes generalized higher-order Fibonacci (k-step) sequence.
+    Preserves exact arbitrary-precision integers natively.
+    """
+    if n_terms <= 0:
         return []
-    if n == 1:
-        return [0]
+    if k <= 1:
+        return [1] * n_terms
     
-    seq = [0] * n
-    seq[1] = 1
+    # Standard base seeds: k-1 zeros followed by 1
+    seq = [0] * (k - 1) + [1]
     
-    # Initialize initial base states up to order k
-    for i in range(2, min(k, n)):
-        seq[i] = 2 ** (i - 1)
+    for _ in range(n_terms - len(seq)):
+        seq.append(sum(seq[-k:]))
         
-    # Generalized recursive sliding sum
-    for i in range(k, n):
-        seq[i] = sum(seq[i - k:i])
-        
-    return seq
+    return seq[:n_terms]
 
-# Generate sequence data
-raw_vals = compute_generalized_fibonacci(order, length)
-indices = list(range(length))
+def get_pisano_period(sequence: list, mod: int) -> list:
+    """Computes residue values modulo m (Pisano / Binary harmonics)."""
+    return [term % mod for term in sequence]
 
-df = pd.DataFrame({
-    "Index": indices,
-    "Value": raw_vals
-})
+# -----------------------------------------------------------------------------
+# Sidebar Parameter Controls
+# -----------------------------------------------------------------------------
+st.sidebar.title("🌌 NeFibonacci Engine")
+st.sidebar.caption("Harmonic Recursive Geometry & Manifold Synthesis")
 
-df["Binary_Parity"] = df["Value"] % 2
-df["Mod_Cycle"] = df["Value"] % modulo_val
+k_order = st.sidebar.slider(
+    "Recurrence Order (k-step)",
+    min_value=2,
+    max_value=12,
+    value=2,
+    help="2 = Standard Fibonacci, 3 = Tribonacci, 4 = Tetranacci, etc."
+)
 
-# 6. Primary Display Layout
-col_stats, col_viz = st.columns([1, 2])
+seq_length = st.sidebar.slider(
+    "Sequence Length",
+    min_value=12,
+    max_value=144,
+    value=64,
+    step=4,
+    help="Total number of nodes plotted along the manifold."
+)
 
-with col_stats:
-    st.subheader("Sequence Metrics")
-    
-    latest_val = df["Value"].iloc[-1]
-    str_val = f"{latest_val:,}" if latest_val < 10**15 else f"{latest_val:.3e}"
-    
-    st.markdown(f"""
-    <div class="metric-container">
-        <div><strong>Recurrence:</strong> {order}-step</div>
-        <div><strong>Total Terms:</strong> {length}</div>
-        <div><strong>Final Term:</strong> <span class="metric-value">{str_val}</span></div>
-        <div><strong>Binary Parity:</strong> {int((df['Binary_Parity'] == 0).sum())} Even / {int((df['Binary_Parity'] == 1).sum())} Odd</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Export CSV Option
-    csv_bytes = df.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="📥 Download Data (CSV)",
-        data=csv_bytes,
-        file_name=f"nefibonacci_k{order}_n{length}.csv",
-        mime="text/csv",
-        use_container_width=True
-    )
-    
-    if show_table:
-        st.dataframe(df, use_container_width=True, height=300)
+modulo_val = st.sidebar.number_input(
+    "Harmonic Modulo (Pisano Base)",
+    min_value=2,
+    max_value=108,
+    value=9,
+    step=1,
+    help="Mod 2 generates binary parity; Mod 9 yields digital root cycles."
+)
 
-with col_viz:
-    st.subheader("Radiant 3D Spiral")
+st.sidebar.markdown("---")
+st.sidebar.subheader("Manifold Parameters")
+
+show_torus = st.sidebar.checkbox("Render Crea-Torus Field", value=True)
+torus_opacity = st.sidebar.slider("Torus Mesh Opacity", 0.05, 0.60, 0.22, step=0.01)
+
+palette_choice = st.sidebar.selectbox(
+    "Color Radiance",
+    ["Plasma", "Viridis", "Electric", "Inferno", "Turbo", "Rainbow"],
+    index=0
+)
+
+# -----------------------------------------------------------------------------
+# Engine Execution & Coordinate Generation
+# -----------------------------------------------------------------------------
+raw_seq = compute_generalized_fibonacci(k_order, seq_length)
+mod_seq = get_pisano_period(raw_seq, modulo_val)
+binary_seq = get_pisano_period(raw_seq, 2)
+
+# Metrics Display
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric("Recurrence Order", f"k = {k_order}")
+with col2:
+    st.metric("Active Modulo", f"Mod {modulo_val}")
+with col3:
+    phi_approx = (raw_seq[-1] / raw_seq[-2]) if len(raw_seq) > 2 and raw_seq[-2] > 0 else 1.0
+    st.metric("Ratio Growth", f"{phi_approx:.6f}")
+with col4:
+    st.metric("Sequence Head", str(raw_seq[-1])[:8] + ("..." if len(str(raw_seq[-1])) > 8 else ""))
+
+# -----------------------------------------------------------------------------
+# 3D Vector Math: Logarithmic Spiral & Toroidal Coordinates
+# -----------------------------------------------------------------------------
+# Dynamic scaling via log1p prevents arbitrary coordinate overflow
+scaled_magnitudes = np.log1p([float(x) for x in raw_seq])
+norm_factors = scaled_magnitudes / (np.max(scaled_magnitudes) if np.max(scaled_magnitudes) != 0 else 1.0)
+
+# Golden Angle theta progression
+golden_angle = np.pi * (3 - np.sqrt(5))
+theta = np.array([i * golden_angle for i in range(seq_length)])
+
+# Logarithmic spiral coordinates
+r = 1.0 + 3.0 * norm_factors
+x_spiral = r * np.cos(theta)
+y_spiral = r * np.sin(theta)
+z_spiral = np.linspace(-3.0, 3.0, seq_length) * norm_factors
+
+# -----------------------------------------------------------------------------
+# Plotly 3D Figure Construction
+# -----------------------------------------------------------------------------
+fig = go.Figure()
+
+# 1. Torus Mesh Layer
+if show_torus:
+    R_major = 3.2
+    r_minor = 1.6
+    u_vals = np.linspace(0, 2 * np.pi, 48)
+    v_vals = np.linspace(0, 2 * np.pi, 48)
+    U, V = np.meshgrid(u_vals, v_vals)
     
-    # Logarithmic scaling to keep high orders within visual bounds
-    scaled_radii = np.log1p(df["Value"].astype(float).values)
+    X_torus = (R_major + r_minor * np.cos(V)) * np.cos(U)
+    Y_torus = (R_major + r_minor * np.cos(V)) * np.sin(U)
+    Z_torus = r_minor * np.sin(V)
     
-    # Golden-ratio based angular evolution
-    phi = (1 + np.sqrt(5)) / 2
-    theta = np.linspace(0, 2 * np.pi * phi * (order / 1.5), length)
-    
-    x_coords = scaled_radii * np.cos(theta)
-    y_coords = scaled_radii * np.sin(theta)
-    z_coords = np.array(indices)
-    
-    # Construct 3D plot
-    fig = go.Figure()
-    
-    # 3D line & marker trace
-    fig.add_trace(go.Scatter3d(
-        x=x_coords,
-        y=y_coords,
-        z=z_coords,
-        mode="lines+markers",
-        line=dict(
-            color=df["Mod_Cycle"],
-            colorscale=colorscale,
-            width=7
-        ),
-        marker=dict(
-            size=6,
-            color=df["Mod_Cycle"],
-            colorscale=colorscale,
-            opacity=0.9
-        ),
-        text=[
-            f"Step: {i}<br>Val: {v:,}<br>Mod {modulo_val}: {m}<br>Parity: {b}"
-            for i, v, m, b in zip(df["Index"], df["Value"], df["Mod_Cycle"], df["Binary_Parity"])
-        ],
-        hoverinfo="text",
-        name="NeFibonacci"
+    fig.add_trace(go.Surface(
+        x=X_torus,
+        y=Y_torus,
+        z=Z_torus,
+        colorscale=palette_choice.lower(),
+        opacity=torus_opacity,
+        showscale=False,
+        hoverinfo="skip"
     ))
-    
-    fig.update_layout(
-        template="plotly_dark",
-        margin=dict(l=0, r=0, b=0, t=10),
-        height=580,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        scene=dict(
-            xaxis=dict(showbackground=False, gridcolor="#27272a", zerolinecolor="#3f3f46", title="X"),
-            yaxis=dict(showbackground=False, gridcolor="#27272a", zerolinecolor="#3f3f46", title="Y"),
-            zaxis=dict(showbackground=False, gridcolor="#27272a", zerolinecolor="#3f3f46", title="Index (Z)"),
-            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2))
+
+# 2. Glowing Nodes (Pisano Modulo Scaled)
+hover_labels = [
+    f"Index: {i}<br>Val: {raw_seq[i]}<br>Mod {modulo_val}: {mod_seq[i]}<br>Binary: {binary_seq[i]}"
+    for i in range(seq_length)
+]
+
+fig.add_trace(go.Scatter3d(
+    x=x_spiral,
+    y=y_spiral,
+    z=z_spiral,
+    mode="lines+markers",
+    text=hover_labels,
+    hoverinfo="text",
+    marker=dict(
+        size=[5 + (m % 9) * 1.2 for m in mod_seq],
+        color=mod_seq,
+        colorscale=palette_choice.lower(),
+        opacity=0.95,
+        line=dict(color="#ffffff", width=0.5)
+    ),
+    line=dict(
+        color=mod_seq,
+        colorscale=palette_choice.lower(),
+        width=4
+    ),
+    name="Recursive Spiral"
+))
+
+# Stage Layout & Viewport Configuration
+fig.update_layout(
+    margin=dict(l=0, r=0, b=0, t=20),
+    template="plotly_dark",
+    paper_bgcolor="#050508",
+    scene=dict(
+        xaxis=dict(showbackground=False, visible=False),
+        yaxis=dict(showbackground=False, visible=False),
+        zaxis=dict(showbackground=False, visible=False),
+        camera=dict(
+            eye=dict(x=1.65, y=1.65, z=1.2)
         )
+    ),
+    legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=0.02,
+        xanchor="center",
+        x=0.5
     )
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+# -----------------------------------------------------------------------------
+# Data Inspection, Harmonics & CSV Download
+# -----------------------------------------------------------------------------
+with st.expander("📊 View Sequence Spectrum & Ledger", expanded=False):
+    df_data = pd.DataFrame({
+        "Index": list(range(seq_length)),
+        "Generalized_Value": [str(val) for val in raw_seq],
+        f"Pisano_Mod_{modulo_val}": mod_seq,
+        "Binary_Parity": binary_seq
+    })
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.dataframe(df_data, use_container_width=True, height=280)
+    
+    csv_bytes = df_data.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Download Full Harmonic Ledger (CSV)",
+        data=csv_bytes,
+        file_name=f"nefibonacci_k{k_order}_mod{modulo_val}.csv",
+        mime="text/csv"
+    )
