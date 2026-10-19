@@ -5,7 +5,6 @@ import plotly.graph_objects as go
 
 st.set_page_config(page_title="rOtOr // Dual-Vortex Engine", page_icon="⚛️", layout="wide")
 
-# High-contrast cyber-hud styling
 st.markdown("""<style>
 .stApp { background: #05060a; font-family: monospace; }
 .hud-title { font-size: 2rem; font-weight: 900; background: linear-gradient(135deg, #00f2fe, #fa709a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
@@ -16,19 +15,19 @@ div[data-testid='stMetricValue'] div { color: #fff !important; font-weight: 800 
 div[data-testid='stSidebar'] { background-color: #06070c !important; }
 </style>""", unsafe_allow_html=True)
 
-# Generalized recurrence & Mod-9 vortex logic
 def compute_k_fib(k, n):
-    if n <= 0: return []
-    if k <= 1: return [1] * n
+    if n <= 0:
+        return []
     s = [0] * (k - 1) + [1]
-    for _ in range(n - len(s)):
+    while len(s) < n:
         s.append(sum(s[-k:]))
     return s[:n]
 
 def get_root9(n):
-    return 9 if (n > 0 and n % 9 == 0) else (n % 9)
+    if n > 0 and n % 9 == 0:
+        return 9
+    return n % 9
 
-# Sidebar controls
 st.sidebar.markdown("<p class='hud-title' style='font-size:1.3rem;'>rOtOr</p><p class='hud-sub'>Vortex Lab</p>", unsafe_allow_html=True)
 k_order = st.sidebar.slider("Order (k-step)", 2, 10, 2)
 seq_length = st.sidebar.slider("Sequence Length", 16, 120, 64, step=4)
@@ -39,7 +38,6 @@ show_torus = st.sidebar.toggle("Crea-Torus Field", value=True)
 torus_op = st.sidebar.slider("Torus Opacity", 0.05, 0.40, 0.15)
 palette = st.sidebar.selectbox("Color Palette", ["Plasma", "Electric", "Viridis", "Inferno", "Turbo"])
 
-# Data arrays
 raw_seq = compute_k_fib(k_order, seq_length)
 mod_seq = [x % modulo_val for x in raw_seq]
 dig_roots = [get_root9(x) for x in raw_seq]
@@ -55,15 +53,17 @@ phi_val = (raw_seq[-1] / raw_seq[-2]) if len(raw_seq) > 2 and raw_seq[-2] > 0 el
 c3.metric("GROWTH (φ)", f"{phi_val:.6f}")
 c4.metric("TERMINAL NODE", f"T[{seq_length-1}] = {str(raw_seq[-1])[:7]}...")
 
-# 3D Vector Math
 nPts = 700
 t = np.linspace(0, spiral_turns * 2 * np.pi, nPts)
 b = float(np.log((1 + 5**0.5) / 2) / (2 * np.pi))
 r = 0.5 * np.exp(b * t)
 z = np.linspace(-3.2, 3.2, nPts)
 
-x1, y1 = r * np.cos(t), r * np.sin(t)
-x2, y2, z2 = r * np.cos(-t), r * np.sin(-t), -z
+x1 = r * np.cos(t)
+y1 = r * np.sin(t)
+x2 = r * np.cos(-t)
+y2 = r * np.sin(-t)
+z2 = -z
 
 c_line = np.interp(np.linspace(0, len(mod_seq) - 1, nPts), np.arange(len(mod_seq)), mod_seq)
 idx_nodes = np.linspace(0, nPts - 1, seq_length).astype(int)
@@ -72,22 +72,21 @@ fig = go.Figure()
 
 if show_torus:
     max_r = float(np.max(r))
-    R_maj, r_min = max_r * 0.75, max_r * 0.35
-    u_g, v_g = np.linspace(0, 2*np.pi, 36), np.linspace(0, 2*np.pi, 36)
+    R_maj = max_r * 0.75
+    r_min = max_r * 0.35
+    u_g = np.linspace(0, 2 * np.pi, 36)
+    v_g = np.linspace(0, 2 * np.pi, 36)
     U, V = np.meshgrid(u_g, v_g)
     Xt = (R_maj + r_min * np.cos(V)) * np.cos(U)
     Yt = (R_maj + r_min * np.cos(V)) * np.sin(U)
     Zt = r_min * np.sin(V)
     fig.add_trace(go.Surface(x=Xt, y=Yt, z=Zt, colorscale=palette.lower(), opacity=torus_op, showscale=False, hoverinfo="skip"))
 
-# Primary vortex
 fig.add_trace(go.Scatter3d(x=x1, y=y1, z=z, mode="lines", line=dict(color=c_line, colorscale=palette.lower(), width=6), name="Expanding (+)"))
 
-# Dual counter vortex
 if show_dual:
     fig.add_trace(go.Scatter3d(x=x2, y=y2, z=z2, mode="lines", line=dict(color=c_line, colorscale="ice", width=4, dash="dot"), name="Converging (-)"))
 
-# Discrete nodes
 h_text = [f"n: {i}<br>Val: {raw_seq[i]}<br>Mod: {mod_seq[i]}<br>Root9: {dig_roots[i]}<br>Parity: {parity_seq[i]}" for i in range(seq_length)]
 fig.add_trace(go.Scatter3d(
     x=x1[idx_nodes], y=y1[idx_nodes], z=z[idx_nodes],
@@ -105,7 +104,6 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Ledger & export
 with st.expander("⚡ DECRYPTED SPECTRAL LEDGER", expanded=False):
     df = pd.DataFrame({"n": range(seq_length), "Term": [str(x) for x in raw_seq], "Mod": mod_seq, "Root9": dig_roots, "Parity": parity_seq})
     st.dataframe(df, use_container_width=True, height=260)
