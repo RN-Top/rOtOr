@@ -4,64 +4,56 @@ import pandas as pd
 import plotly.graph_objects as go
 
 # -----------------------------------------------------------------------------
-# Elite Stage Configuration & Theme Injector
+# High-Voltage Laboratory Setup & Theme
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="NeFibonacci // 3D Toroidal Vortex",
-    page_icon="⚡",
+    page_title="NeFibonacci // Dual-Vortex Toroidal Manifold",
+    page_icon="⚛️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Deep-space cyber-terminal aesthetic
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@600;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&display=swap');
 
     .stApp {
-        background: radial-gradient(circle at 50% 10%, #0d0f18 0%, #030407 100%);
+        background: radial-gradient(circle at 50% 12%, #0d0f1b 0%, #020306 100%);
         font-family: 'JetBrains Mono', monospace;
     }
     
-    /* Header typography */
-    .title-gradient {
+    .hud-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 2.4rem;
+        font-size: 2.3rem;
         font-weight: 900;
-        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 35%, #f093fb 75%, #f5576c 100%);
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 30%, #fa709a 70%, #fee140 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.14em;
         margin-bottom: 0px;
-        text-shadow: 0 0 28px rgba(79, 172, 254, 0.35);
+        text-shadow: 0 0 35px rgba(0, 242, 254, 0.4);
     }
     
-    .sub-glow {
-        color: #7983a3;
-        font-size: 0.88rem;
-        letter-spacing: 0.18em;
+    .hud-caption {
+        color: #8b97b8;
+        font-size: 0.82rem;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
-        margin-bottom: 1.6rem;
+        margin-bottom: 1.4rem;
     }
 
-    /* Cyber HUD Metrics */
     div[data-testid="stMetric"] {
-        background: rgba(14, 17, 28, 0.72) !important;
-        border: 1px solid rgba(79, 172, 254, 0.22) !important;
+        background: rgba(13, 16, 27, 0.78) !important;
+        border: 1px solid rgba(0, 242, 254, 0.25) !important;
         border-radius: 12px !important;
-        padding: 14px 18px !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(10px);
-        transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    div[data-testid="stMetric"]:hover {
-        border-color: rgba(0, 242, 254, 0.6) !important;
-        transform: translateY(-2px);
+        padding: 12px 16px !important;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        backdrop-filter: blur(12px);
     }
     div[data-testid="stMetricLabel"] p {
         color: #00f2fe !important;
         font-family: 'Orbitron', sans-serif !important;
-        font-size: 0.75rem !important;
+        font-size: 0.72rem !important;
         letter-spacing: 0.12em !important;
         text-transform: uppercase !important;
     }
@@ -69,30 +61,19 @@ st.markdown("""
         color: #ffffff !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-weight: 800 !important;
-        font-size: 1.45rem !important;
-        text-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
+        font-size: 1.4rem !important;
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
     }
 
-    /* Control Sidebar Deck */
     div[data-testid="stSidebar"] {
-        background-color: #06070c !important;
-        border-right: 1px solid rgba(79, 172, 254, 0.16) !important;
-    }
-    
-    .sidebar-section-title {
-        font-family: 'Orbitron', sans-serif;
-        color: #00f2fe;
-        font-size: 0.85rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        margin-top: 1.2rem;
-        margin-bottom: 0.4rem;
+        background-color: #05060a !important;
+        border-right: 1px solid rgba(0, 242, 254, 0.18) !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# High-Order Recurrence Engine
+# Generalized Recurrence & Digital Root Math Engine
 # -----------------------------------------------------------------------------
 def compute_generalized_fibonacci(k: int, n_terms: int) -> list:
     if n_terms <= 0:
@@ -104,127 +85,97 @@ def compute_generalized_fibonacci(k: int, n_terms: int) -> list:
         seq.append(sum(seq[-k:]))
     return seq[:n_terms]
 
-def get_pisano_period(sequence: list, mod: int) -> list:
-    return [term % mod for term in sequence]
+def get_digital_root(n: int) -> int:
+    """Vortex math digital root reduction modulo 9 with 9-preservation."""
+    if n == 0:
+        return 0
+    return 9 if n % 9 == 0 else n % 9
 
 # -----------------------------------------------------------------------------
-# Mission Control Sidebar
+# Mission Sidebar Navigation
 # -----------------------------------------------------------------------------
-st.sidebar.markdown('<p class="title-gradient" style="font-size: 1.4rem;">NeFibonacci</p>', unsafe_allow_html=True)
-st.sidebar.markdown('<p class="sub-glow" style="margin-bottom: 1rem;">Recursive Dynamics Lab</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p class="hud-title" style="font-size: 1.3rem;">NeFibonacci</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p class="hud-caption" style="margin-bottom: 0.8rem;">Vortex & Field Harmonics</p>', unsafe_allow_html=True)
 
-st.sidebar.markdown('<p class="sidebar-section-title">⚡ Harmonic Calibration</p>', unsafe_allow_html=True)
+k_order = st.sidebar.slider("Recurrence Order (k-step)", 2, 12, 2)
+seq_length = st.sidebar.slider("Nodal Sequence Length", 16, 160, 72, step=4)
+modulo_val = st.sidebar.number_input("Modular Base (Pisano)", min_value=2, max_value=108, value=9, step=1)
+spiral_turns = st.sidebar.slider("Vortex Revolutions", 1.0, 10.0, 4.0, step=0.5)
 
-k_order = st.sidebar.slider(
-    "Recurrence Order (k-step)",
-    min_value=2,
-    max_value=12,
-    value=2,
-    help="2 = Fibonacci, 3 = Tribonacci, 4 = Tetranacci..."
-)
+st.sidebar.markdown("---")
+render_dual = st.sidebar.toggle("Engage Counter-Rotating Dual Vortex", value=True)
+show_torus = st.sidebar.toggle("Render Crea-Torus Manifold", value=True)
+torus_opacity = st.sidebar.slider("Torus Field Density", 0.04, 0.45, 0.14, step=0.01)
 
-seq_length = st.sidebar.slider(
-    "Coordinate Length (Nodes)",
-    min_value=12,
-    max_value=144,
-    value=64,
-    step=4,
-    help="Total nodes projected along the trajectory."
-)
-
-modulo_val = st.sidebar.number_input(
-    "Residue Base (Mod N)",
-    min_value=2,
-    max_value=108,
-    value=9,
-    step=1,
-    help="Digital roots (Mod 9) or binary parity (Mod 2)."
-)
-
-spiral_turns = st.sidebar.slider(
-    "Vortex Density (Turns)",
-    min_value=1.0,
-    max_value=8.0,
-    value=3.5,
-    step=0.5,
-    help="Coiling revolutions around the central axis."
-)
-
-st.sidebar.markdown('<p class="sidebar-section-title">🔮 Manifold Topography</p>', unsafe_allow_html=True)
-
-show_torus = st.sidebar.toggle("Engage Crea-Torus Manifold", value=True)
-torus_opacity = st.sidebar.slider("Torus Field Transparency", 0.05, 0.45, 0.16, step=0.01)
-
-palette_choice = st.sidebar.selectbox(
-    "Radiance Spectrum",
-    ["Plasma", "Electric", "Viridis", "Inferno", "Turbo", "Rainbow"],
-    index=0
-)
+palette = st.sidebar.selectbox("Resonance Spectrum", ["Plasma", "Electric", "Viridis", "Inferno", "Turbo", "Rainbow"], index=0)
 
 # -----------------------------------------------------------------------------
-# Live Header & Dynamic HUD Telemetry
+# Data Computation & Telemetry
 # -----------------------------------------------------------------------------
-st.markdown('<p class="title-gradient">NeFibonacci // VORTEX ENGINE</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-glow">Higher-Order Recursive Geometries · Pisano Harmonics · Toroidal Embedding</p>', unsafe_allow_html=True)
-
 raw_seq = compute_generalized_fibonacci(k_order, seq_length)
-mod_seq = get_pisano_period(raw_seq, modulo_val)
-binary_seq = get_pisano_period(raw_seq, 2)
+mod_seq = [x % modulo_val for x in raw_seq]
+dig_roots = [get_digital_root(x) for x in raw_seq]
+binary_parity = [x % 2 for x in raw_seq]
 
-h1, h2, h3, h4 = st.columns(4)
-with h1:
-    k_names = {2: "Golden", 3: "Tribonacci", 4: "Tetranacci", 5: "Pentanacci"}
-    k_label = k_names.get(k_order, f"{k_order}-Step")
-    st.metric("ORDER CLASS", f"{k_label} [k={k_order}]")
-with h2:
-    st.metric("HARMONIC MODULO", f"MOD {modulo_val}")
-with h3:
+st.markdown('<p class="hud-title">NeFibonacci // VORTEX TORUS</p>', unsafe_allow_html=True)
+st.markdown('<p class="hud-caption">Dual Polar Dynamics · Modulo 9 Vortex Vectoring · Parametric Embedding</p>', unsafe_allow_html=True)
+
+m1, m2, m3, m4 = st.columns(4)
+with m1:
+    names = {2: "Standard Phi", 3: "Tribonacci", 4: "Tetranacci", 5: "Pentanacci"}
+    st.metric("SEQUENCE CLASS", f"{names.get(k_order, f'{k_order}-Step')} [k={k_order}]")
+with m2:
+    st.metric("VORTEX HARMONIC", f"MOD {modulo_val} / ROOT 9")
+with m3:
     phi_val = (raw_seq[-1] / raw_seq[-2]) if len(raw_seq) > 2 and raw_seq[-2] > 0 else 1.0
-    st.metric("GROWTH CONSTANT (φ)", f"{phi_val:.6f}")
-with h4:
-    head_num = str(raw_seq[-1])
-    disp = head_num[:8] + "…" if len(head_num) > 8 else head_num
-    st.metric("EXPANSION VECTOR", f"T[{seq_length-1}] = {disp}")
+    st.metric("EXPANSION RATIO", f"{phi_val:.6f}")
+with m4:
+    head_str = str(raw_seq[-1])
+    st.metric("TERMINAL NODE", f"T[{seq_length-1}] = {head_str[:8]}…" if len(head_str) > 8 else head_str)
 
 # -----------------------------------------------------------------------------
-# 3D Vector Math: True Continuous Logarithmic Spiral & Crea-Torus Field
+# 3D Vector Math: Dual Counter-Rotating Logarithmic Coils & Torus
 # -----------------------------------------------------------------------------
-n_curve_points = 900
-t_vals = np.linspace(0, spiral_turns * 2 * np.pi, n_curve_points)
+n_interp = 800
+t_pts = np.linspace(0, spiral_turns * 2 * np.pi, n_interp)
 
-# Golden spiral expansion rate
 phi = (1 + np.sqrt(5)) / 2
-growth_rate = float(np.log(phi) / (2 * np.pi))
+growth_const = float(np.log(phi) / (2 * np.pi))
 
-# Exponential logarithmic expansion
-r_curve = 0.5 * np.exp(growth_rate * t_vals)
-x_spiral = r_curve * np.cos(t_vals)
-y_spiral = r_curve * np.sin(t_vals)
-z_spiral = np.linspace(-3.2, 3.2, n_curve_points)
+r_curve = 0.45 * np.exp(growth_const * t_pts)
+z_curve = np.linspace(-3.5, 3.5, n_interp)
 
-# Continuous harmonic spectrum across spiral path
-color_interp = np.linspace(0, len(mod_seq) - 1, n_curve_points)
-line_colors = np.interp(color_interp, np.arange(len(mod_seq)), mod_seq)
+# Primary Expanding Vortex (Yang)
+x_primary = r_curve * np.cos(t_pts)
+y_primary = r_curve * np.sin(t_pts)
 
-# Discrete nodal coordinates
-node_indices = np.linspace(0, n_curve_points - 1, seq_length).astype(int)
-x_nodes = x_spiral[node_indices]
-y_nodes = y_spiral[node_indices]
-z_nodes = z_spiral[node_indices]
+# Counter-Rotating Converging Vortex (Yin)
+x_counter = r_curve * np.cos(-t_pts)
+y_counter = r_curve * np.sin(-t_pts)
+z_counter = -z_curve
+
+# Color map interpolation across smooth paths
+colors_interp = np.interp(np.linspace(0, len(mod_seq) - 1, n_interp), np.arange(len(mod_seq)), mod_seq)
+
+# Discrete Node Positions
+sample_indices = np.linspace(0, n_interp - 1, seq_length).astype(int)
+x_nodes = x_primary[sample_indices]
+y_nodes = y_primary[sample_indices]
+z_nodes = z_curve[sample_indices]
 
 # -----------------------------------------------------------------------------
-# Plotly 3D Radiant Stage
+# Plotly 3D Figure Construction
 # -----------------------------------------------------------------------------
 fig = go.Figure()
 
-# 1. Torus Mesh
+# 1. Parametric Crea-Torus Shell
 if show_torus:
-    max_r = float(np.max(r_curve))
-    R_major = max_r * 0.72
-    r_minor = max_r * 0.36
+    max_radius = float(np.max(r_curve))
+    R_major = max_radius * 0.76
+    r_minor = max_radius * 0.38
     
-    u_grid = np.linspace(0, 2 * np.pi, 42)
-    v_grid = np.linspace(0, 2 * np.pi, 42)
+    u_grid = np.linspace(0, 2 * np.pi, 44)
+    v_grid = np.linspace(0, 2 * np.pi, 44)
     U, V = np.meshgrid(u_grid, v_grid)
     
     X_torus = (R_major + r_minor * np.cos(V)) * np.cos(U)
@@ -235,33 +186,42 @@ if show_torus:
         x=X_torus,
         y=Y_torus,
         z=Z_torus,
-        colorscale=palette_choice.lower(),
+        colorscale=palette.lower(),
         opacity=torus_opacity,
         showscale=False,
         hoverinfo="skip"
     ))
 
-# 2. Glowing Continuous Vortex Path
+# 2. Primary Logarithmic Vortex
 fig.add_trace(go.Scatter3d(
-    x=x_spiral,
-    y=y_spiral,
-    z=z_spiral,
+    x=x_primary,
+    y=y_primary,
+    z=z_curve,
     mode="lines",
-    line=dict(
-        color=line_colors,
-        colorscale=palette_choice.lower(),
-        width=6
-    ),
+    line=dict(color=colors_interp, colorscale=palette.lower(), width=6),
     hoverinfo="skip",
-    name="Logarithmic Vortex"
+    name="Expanding Vortex (+)"
 ))
 
-# 3. High-Voltage Sequence Nodes
-hover_labels = [
-    f"<b>Node Index:</b> {i}<br>"
-    f"<b>Value:</b> {raw_seq[i]}<br>"
-    f"<b>Mod {modulo_val}:</b> {mod_seq[i]}<br>"
-    f"<b>Binary Parity:</b> {binary_seq[i]}"
+# 3. Counter-Rotating Vortex
+if render_dual:
+    fig.add_trace(go.Scatter3d(
+        x=x_counter,
+        y=y_counter,
+        z=z_counter,
+        mode="lines",
+        line=dict(color=colors_interp, colorscale="ice", width=4, dash="dot"),
+        hoverinfo="skip",
+        name="Converging Vortex (-)"
+    ))
+
+# 4. Sequence Harmonic Nodes with Vortex Digital Roots
+hover_data = [
+    f"<b>Node Index [n]:</b> {i}<br>"
+    f"<b>Term:</b> {raw_seq[i]}<br>"
+    f"<b>Digital Root:</b> {dig_roots[i]}<br>"
+    f"<b>Pisano Mod {modulo_val}:</b> {mod_seq[i]}<br>"
+    f"<b>Binary Parity:</b> {binary_parity[i]}"
     for i in range(seq_length)
 ]
 
@@ -270,19 +230,19 @@ fig.add_trace(go.Scatter3d(
     y=y_nodes,
     z=z_nodes,
     mode="markers",
-    text=hover_labels,
+    text=hover_data,
     hoverinfo="text",
     marker=dict(
-        size=[5 + (m % 9) * 1.4 for m in mod_seq],
+        size=[5 + (dr % 9) * 1.5 for dr in dig_roots],
         color=mod_seq,
-        colorscale=palette_choice.lower(),
+        colorscale=palette.lower(),
         opacity=1.0,
-        line=dict(color="#ffffff", width=1.0)
+        line=dict(color="#ffffff", width=1.1)
     ),
-    name="Harmonic Nodes"
+    name="Digital Root Nodes"
 ))
 
-# Dark-room viewport config
+# Viewport Camera & Styling
 fig.update_layout(
     margin=dict(l=0, r=0, b=0, t=10),
     template="plotly_dark",
@@ -292,9 +252,7 @@ fig.update_layout(
         xaxis=dict(showbackground=False, visible=False),
         yaxis=dict(showbackground=False, visible=False),
         zaxis=dict(showbackground=False, visible=False),
-        camera=dict(
-            eye=dict(x=1.65, y=1.65, z=1.25)
-        )
+        camera=dict(eye=dict(x=1.7, y=1.7, z=1.35))
     ),
     legend=dict(
         orientation="h",
@@ -302,30 +260,31 @@ fig.update_layout(
         y=0.03,
         xanchor="center",
         x=0.5,
-        font=dict(family="Orbitron", size=10, color="#7983a3"),
-        bgcolor="rgba(10, 12, 18, 0.6)"
+        font=dict(family="Orbitron", size=10, color="#8b97b8"),
+        bgcolor="rgba(10, 12, 20, 0.6)"
     )
 )
 
 st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------------------------------------------------------------
-# Spectral Ledger & Data Terminal
+# Decrypted Data Matrix & Export
 # -----------------------------------------------------------------------------
-with st.expander("⚡ DECRYPTED SPECTRAL LEDGER & RAW ARRAYS", expanded=False):
+with st.expander("⚡ DECRYPTED HARMONIC SPECTRUM & CSV LEDGER", expanded=False):
     df_data = pd.DataFrame({
         "Index [n]": list(range(seq_length)),
         "Exact Integer Term": [str(val) for val in raw_seq],
+        "Digital Root (Mod 9)": dig_roots,
         f"Pisano Residue (Mod {modulo_val})": mod_seq,
-        "Binary State": binary_seq
+        "Binary Parity": binary_parity
     })
     
     st.dataframe(df_data, use_container_width=True, height=280)
     
     csv_bytes = df_data.to_csv(index=False).encode("utf-8")
     st.download_button(
-        label="⚡ EXPORT RAW HARMONIC TELEMETRY (CSV)",
+        label="⚡ EXPORT QUANTUM TELEMETRY DATA (CSV)",
         data=csv_bytes,
-        file_name=f"nefibonacci_k{k_order}_mod{modulo_val}_telemetry.csv",
+        file_name=f"nefibonacci_k{k_order}_dual_vortex.csv",
         mime="text/csv"
     )
