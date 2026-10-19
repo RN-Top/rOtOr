@@ -3,7 +3,11 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-st.set_page_config(page_title="rOtOr // Dual-Vortex Engine", page_icon="⚛️", layout="wide")
+st.set_page_config(
+    page_title="rOtOr // Dual-Vortex Engine",
+    page_icon="⚛️",
+    layout="wide"
+)
 
 st.markdown("""<style>
 .stApp { background: #05060a; font-family: monospace; }
@@ -18,10 +22,15 @@ div[data-testid='stSidebar'] { background-color: #06070c !important; }
 def compute_k_fib(k, n):
     if n <= 0:
         return []
-    s = [0] * (k - 1) + [1]
-    while len(s) < n:
-        s.append(sum(s[-k:]))
-    return s[:n]
+    res = []
+    for i in range(n):
+        if i < (k - 1):
+            res.append(0)
+        elif i == (k - 1):
+            res.append(1)
+        else:
+            res.append(sum(res[-k:]))
+    return res
 
 def get_root9(n):
     if n > 0 and n % 9 == 0:
